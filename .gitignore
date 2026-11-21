@@ -1,0 +1,33 @@
+# Environnement Python (recree avec requirements.txt)
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets : ne jamais envoyer sur Git
+.env
+*.key
+*.pem
+secrets/
+
+# Donnees generees (recreees avec ingest.py)
+data/images/
+data/documents/
+qdrant_storage/
+
+# Modeles et caches (lourds)
+*.safetensors
+*.bin
+*.onnx
+*.dll
+.cache/
+huggingface/
+
+# Outils et editeurs
+.vscode/
+.idea/
+.pytest_cache/
+mlruns/
+
+# Windows
+Thumbs.db
+Desktop.ini
