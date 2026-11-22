@@ -197,6 +197,25 @@ for i, page in enumerate(doc):
                 )
             )
 
+            if p in FIGS and j == 1:
+                ocr_str, conf = ocr_text(path)
+                if ocr_str:
+                    card = (
+                        f"{fig} - schema de la page {p} "
+                        f"(texte lu par OCR) : {ocr_str}"
+                    )
+                    text_items.append(
+                        (
+                            card,
+                            {
+                                **base(p, f"{fig}-OCR", "schema_ocr"),
+                                "text": card,
+                                "image_path": str(path),
+                                "ocr_confidence": round(conf, 2),
+                            },
+                        )
+                    )
+
         except Exception as e:
             print(f"Page {p}: image {j} ignorée ({e})")
 
