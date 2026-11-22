@@ -41,6 +41,7 @@ if __name__ == "__main__":
         "Que signifie AL-01 ?",
         "Quelle alerte touche la capacité ?",
         "Qui doit approuver la création du ticket ?",
+        "Où intervient le zoning ?",
     ]
     for q in questions:
         print(f"\n=== {q}")
