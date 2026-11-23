@@ -32,6 +32,7 @@ FIGS = {
     6: "FIG-05",
 }
 
+EVAL_TABLES = {(7, 2)}  # tableau des questions (page 7)
 EVAL_PAGE = 7  # Jeu de questions : sert à t'évaluer, jamais de preuve
 
 TABLE_CONTEXT = {
@@ -39,6 +40,8 @@ TABLE_CONTEXT = {
     (4, 1): "Elements, symptomes et verifications",
     (5, 1): "Codes d'alarmes ALARM-TAB-01",
     (6, 1): "Operations et autorisation dans MaintiDoc",
+    (7, 1): "Historique des interventions",
+    (7, 3): "Exemple de ticket a preparer",
 }
 
 
@@ -113,9 +116,20 @@ for i, page in enumerate(doc):
     is_eval = p == EVAL_PAGE
 
     txt = fix(page.get_text("text", sort=True))
+    if is_eval:
+        m = re.search(r"7\.\s*Jeu de questions", txt)
+        if m:
+            eval_text = txt[m.start():]
+            txt = txt[:m.start()].strip()
+            text_items.append(
+                (eval_text, {**base(p, f"P{p:02d}-TEXT-EVAL", "eval_question"),
+                             "text": eval_text}))
+        else:
+            print("ATTENTION : separation de la page 7 impossible, page ignoree")
+            txt = ""
 
     if txt:
-        kind = "eval_question" if is_eval else "texte"
+        kind = "texte"
 
         text_items.append(
             (
@@ -147,7 +161,7 @@ for i, page in enumerate(doc):
                 if ctx:
                     line = f"{ctx} : {line}"
 
-                kind = "eval_question" if is_eval else "tableau_ligne"
+                kind = "eval_question" if (p, t) in EVAL_TABLES else "tableau_ligne"
 
                 text_items.append(
                     (
