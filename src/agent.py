@@ -111,7 +111,8 @@ def node_history(state):
 def node_search(state):
     n = state.get("searches", 0)
     k, top = (10, 3) if n == 0 else (20, 5)   # 2e essai : plus large
-    ev = rerank(state["question"], search_text(state["question"], k), top)
+    cands = search_text(state["question"], k, groups=state["user_groups"])
+    ev = rerank(state["question"], cands, top) if cands else []
     groups = set(state["user_groups"])
     ev = [e for e in ev if groups & set(e["access_groups"])]
     return {"evidence": ev, "searches": n + 1}
@@ -162,6 +163,17 @@ def node_answer(state):
 
 def node_validate(state):
     _, verdict = check_citations(Answer(**state["answer"]), all_evidence(state))
+    if not verdict.startswith("OK"):
+        return {
+            "verdict": verdict,
+            "answer": {
+                "status": "needs_clarification",
+                "answer": "Je ne peux pas confirmer cette reponse avec les sources disponibles.",
+                "clarification_question": "Pouvez-vous preciser l equipement et le code d alarme ?",
+                "citations": [],
+                "uncertainties": ["Reponse bloquee par le controle des citations : " + verdict],
+            },
+        }
     return {"verdict": verdict}
 
 
